@@ -1,0 +1,51 @@
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  application:
+    name: apigateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: member-service
+          uri: lb://MEMBER-SERVICE
+          predicates:
+            - Path=/app/member/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth/**
+#          filters:
+#            - RemoveRequestHeader=Cookie
+        - id: hobby-service
+          uri: lb://HOBBY-SERVICE
+          predicates:
+            - Path=/app/hobby/**
+        - id: basic-service
+          uri: lb://BASIC-SERVICE
+          predicates:
+            - Path=/app/base-address/**, /app/category/**
+#        - id: basic-service
+#          uri: lb://BASIC-SERVICE
+#          predicates:
+#            - Path=/app/category/**
+        - id: deal-service
+          uri: lb://DEAL-SERVICE
+          predicates:
+            - Path=/app/deal/**, /app/deal-history/**
+#        - id: deal-service
+#          uri: lb://DEAL-SERVICE
+#          predicates:
+#            - Path=/app/deal-history/**
+
+token:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK

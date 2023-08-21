@@ -1,0 +1,52 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: deal-service
+  profiles:
+    include: API-KEY
+  output:
+    ansi:
+      enabled: always # ?? ?? ??
+  datasource:
+    url: jdbc:mysql://localhost:3306/nuguri_deal?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: nuguri
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: ${MYSQL_PASSWORD}
+  sql:
+    init:
+      mode: always
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 1000
+    defer-datasource-initialization: true
+
+  servlet:
+    multipart:
+      max-file-size: 7MB
+      max-request-size: 7MB
+
+logging:
+  level:
+    com.ssafy.nuguri.dealservice.client: debug
+    org.hibernate.SQL: debug
+    com.amazonaws.util.EC2MetadataUtils: error
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka

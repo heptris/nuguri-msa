@@ -1,0 +1,30 @@
+server:
+  port: 0
+
+spring:
+  profiles:
+    include: API-KEY
+  application:
+    name: auth-service
+
+  redis:
+    host: localhost
+    port: 6379
+
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+jwt:
+  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+  blacklist:
+    access-token: BlackList_AccessToken_
+
+logging:
+  level:
+    nuguri.nuguri_auth.client: DEBUG
