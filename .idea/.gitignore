@@ -30,7 +30,7 @@ bin/
 ### IntelliJ IDEA ###
 application-API-KEY.properties
 index.adoc
-.idea
+*.idea
 *.iws
 *.iml
 *.ipr
