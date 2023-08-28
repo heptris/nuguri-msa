@@ -31,7 +31,7 @@ public class KafkaProducer {
         }
 
         kafkaTemplate.send(topic, jsonInString);
-        log.info("Kafka Producer sent data from the Order microservice: " + toMemberTempDto);
+        log.info("Kafka Producer sent data from the Deal microservice: " + toMemberTempDto);
 
         return toMemberTempDto;
     }
