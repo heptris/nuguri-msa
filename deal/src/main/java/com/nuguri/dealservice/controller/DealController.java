@@ -23,6 +23,13 @@ public class DealController {
 
     private final DealService dealService;
 
+    @ApiOperation(value = "비로그인시 중고거래 상세페이지 조회")
+    @GetMapping("/{dealId}/detail")
+    public ResponseEntity findDealDetail(@PathVariable Long dealId){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseDto(HttpStatus.OK.value(),"비로그인시 중고거래 상세페이지", dealService.findDealDetail(dealId))
+        );
+    }
 
     @ApiOperation(value = "중고거래 등록")
     @PostMapping("/regist")

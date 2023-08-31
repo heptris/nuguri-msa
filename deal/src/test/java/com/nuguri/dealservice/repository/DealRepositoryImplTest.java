@@ -1,5 +1,6 @@
 package com.nuguri.dealservice.repository;
 
+import com.nuguri.dealservice.dto.deal.DealDetailExceptDongDto;
 import com.nuguri.dealservice.dto.deal.DealListDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,12 @@ class DealRepositoryImplTest {
 
     @Autowired
     DealRepository dealRepository;
+
+    @Test
+    public void 비로그인시상세페이지() throws Exception {
+        DealDetailExceptDongDto dealDetailExceptDongDto = dealRepository.dealDetail(1L).get();
+        System.out.println("dealDetailExceptDongDto = " + dealDetailExceptDongDto);
+    }
     
     @Test
     public void 판매완료된목록() throws Exception{

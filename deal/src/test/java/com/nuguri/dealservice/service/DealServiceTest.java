@@ -3,6 +3,7 @@ package com.nuguri.dealservice.service;
 import com.nuguri.dealservice.domain.DealFavorite;
 import com.nuguri.dealservice.dto.baseaddress.BaseAddressDto;
 import com.nuguri.dealservice.dto.category.CategoryListDto;
+import com.nuguri.dealservice.dto.deal.DealDetailDto;
 import com.nuguri.dealservice.dto.deal.DealListDto;
 import com.nuguri.dealservice.repository.DealFavoriteRepository;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,12 @@ class DealServiceTest {
     DealService dealService;
     @Autowired
     DealFavoriteRepository dealFavoriteRepository;
+
+    @Test
+    public void 비로그인상세페이지조회() throws Exception{
+        DealDetailDto dealDetail = dealService.findDealDetail(1L);
+        System.out.println("dealDetail = " + dealDetail);
+    }
 
     @Test
     public void feignclientest() throws Exception{
