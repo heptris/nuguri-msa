@@ -2,6 +2,7 @@ package com.nuguri.dealservice.repository;
 
 import com.nuguri.dealservice.domain.QDeal;
 import com.nuguri.dealservice.dto.deal.DealDetailDto;
+import com.nuguri.dealservice.dto.deal.DealDetailExceptDongDto;
 import com.nuguri.dealservice.dto.deal.DealListDto;
 import com.nuguri.dealservice.dto.deal.DealListRequestCondition;
 import com.querydsl.core.types.Projections;
@@ -83,5 +84,24 @@ public class DealRepositoryImpl implements DealRepositoryCustom{
                 .where(deal.memberId.eq(memberId).and(deal.isDeal.eq(FALSE)))
                 .fetch();
         return dealListDtoList;
+    }
+
+    @Override
+    public Optional<DealDetailExceptDongDto> dealDetail(Long dealId) {
+        return Optional.ofNullable(queryFactory
+                .select(Projections.constructor(DealDetailExceptDongDto.class,
+                        deal.id,
+                        deal.title,
+                        deal.description,
+                        deal.price,
+                        deal.hit,
+                        deal.isDeal,
+                        deal.dealImage,
+                        deal.memberId
+                        ))
+                .from(deal)
+                .where(deal.id.eq(dealId))
+                .fetchOne()
+        );
     }
 }

@@ -6,12 +6,13 @@ import com.nuguri.dealservice.domain.Deal;
 import com.nuguri.dealservice.domain.DealFavorite;
 import com.nuguri.dealservice.domain.s3.AwsS3;
 import com.nuguri.dealservice.dto.baseaddress.BaseAddressDto;
+import com.nuguri.dealservice.dto.baseaddress.BaseAddressIdRequestDto;
+import com.nuguri.dealservice.dto.baseaddress.BaseAddressSidoGugunDongDto;
 import com.nuguri.dealservice.dto.category.CategoryListDto;
-import com.nuguri.dealservice.dto.deal.DealListDto;
-import com.nuguri.dealservice.dto.deal.DealRegistRequestDto;
-import com.nuguri.dealservice.dto.deal.DealUpdateDto;
+import com.nuguri.dealservice.dto.deal.*;
 import com.nuguri.dealservice.dto.member.MemberIdRequestDto;
 import com.nuguri.dealservice.dto.member.MemberInfoResponseDto;
+import com.nuguri.dealservice.dto.member.MemberNicknameResponseDto;
 import com.nuguri.dealservice.exception.ex.CustomException;
 import com.nuguri.dealservice.messagequeue.KafkaProducer;
 import com.nuguri.dealservice.repository.DealFavoriteRepository;
@@ -50,6 +51,28 @@ public class DealService {
     }
     public List<CategoryListDto> getAllCategory(){
         return basicClient.getAllCategory();
+    }
+
+    public DealDetailDto findDealDetail(Long dealId){
+        DealDetailExceptDongDto dealDetailExceptDongDto = dealRepository.dealDetail(dealId).orElseThrow(() -> new CustomException(DEAL_NOT_FOUND));
+
+        Deal deal = dealRepository.findById(dealId).orElseThrow(() -> new CustomException(DEAL_NOT_FOUND));
+        BaseAddressSidoGugunDongDto sidoGugunDongDto = basicClient.findByLocalId(new BaseAddressIdRequestDto(deal.getLocalId()));
+
+        Long memberId = dealDetailExceptDongDto.getSellerId();
+        MemberNicknameResponseDto nicknameResponseDto = memberClient.getNicknameByMemberId(new MemberIdRequestDto(memberId));
+
+        return DealDetailDto.builder()
+                .isDeal(dealDetailExceptDongDto.isDeal())
+                .dealId(dealDetailExceptDongDto.getDealId())
+                .dealImage(dealDetailExceptDongDto.getDealImage())
+                .description(dealDetailExceptDongDto.getDescription())
+                .dong(sidoGugunDongDto.getDong())
+                .hit(dealDetailExceptDongDto.getHit())
+                .price(dealDetailExceptDongDto.getPrice())
+                .sellerId(memberId)
+                .sellerNickname(nicknameResponseDto.getNickname())
+                .build();
     }
 
     @Transactional

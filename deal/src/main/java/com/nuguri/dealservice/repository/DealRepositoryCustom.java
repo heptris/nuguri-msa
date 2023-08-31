@@ -1,6 +1,7 @@
 package com.nuguri.dealservice.repository;
 
 import com.nuguri.dealservice.dto.deal.DealDetailDto;
+import com.nuguri.dealservice.dto.deal.DealDetailExceptDongDto;
 import com.nuguri.dealservice.dto.deal.DealListDto;
 import com.nuguri.dealservice.dto.deal.DealListRequestCondition;
 import org.springframework.data.domain.Page;
@@ -16,5 +17,7 @@ public interface DealRepositoryCustom {
     List<DealListDto> findDealByMemberIdAndIsDealTrue(Long memberId);
 
     List<DealListDto> findDealByMemberIdAndIsDealFalse(Long memberId);
+
+    Optional<DealDetailExceptDongDto> dealDetail(Long dealId);
 
 }
