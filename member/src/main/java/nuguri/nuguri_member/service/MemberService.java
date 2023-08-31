@@ -1,5 +1,6 @@
 package nuguri.nuguri_member.service;
 
+import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import nuguri.nuguri_member.client.AuthServiceClient;
 import nuguri.nuguri_member.client.BaseAddressServiceClient;
@@ -19,6 +20,8 @@ import nuguri.nuguri_member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import nuguri.nuguri_member.exception.ex.ErrorCode;
 import nuguri.nuguri_member.service.s3.AwsS3Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static nuguri.nuguri_member.exception.ex.ErrorCode.INVALID_ACCESS;
 import static nuguri.nuguri_member.exception.ex.ErrorCode.MEMBER_NOT_FOUND;
 
 @Slf4j
@@ -48,29 +52,33 @@ public class MemberService {
 
     private final RedisService redisService;
 
+    @Value("${token.secret}")
+    private String secret;
+
     /**
      * 회원 프로필 조회
      */
     @Transactional
-    public MemberProfileDto profile(MemberProfileRequestDto requestDto){
+    public MemberProfileDto profile(MemberProfileRequestDto requestDto, String token){
         MemberProfileDto memberProfileDto;
 
-        // 다른 회원 프로필 조회
-        if(requestDto.getNickname() != null){
-            Member member = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        String jwt = token.replace("Bearer ", "");
+        Long memberId = Long.parseLong(getMemberIdFromJwt(jwt));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-            BaseAddressIdRequestDto baseAddressIdRequestDto = new BaseAddressIdRequestDto(member.getLocalId());
+        // 다른 회원 프로필 조회
+        if(!requestDto.getNickname().equals(member.getNickname())){
+            Member other = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+            BaseAddressIdRequestDto baseAddressIdRequestDto = new BaseAddressIdRequestDto(other.getLocalId());
 
             BaseAddressSidoGugunDongDto baseAddressDto = baseAddressServiceClient.findByLocalId(baseAddressIdRequestDto);
 
-            memberProfileDto = profileCreate(member, baseAddressDto);
+            memberProfileDto = profileCreate(other, baseAddressDto);
         }
 
         // 본인 프로필 조회
         else {
-            Long memberId = authServiceClient.getMemberIdBySecurityUtil();
-            Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-
             BaseAddressIdRequestDto baseAddressIdRequestDto = new BaseAddressIdRequestDto(member.getLocalId());
 
             BaseAddressSidoGugunDongDto baseAddressDto = baseAddressServiceClient.findByLocalId(baseAddressIdRequestDto);
@@ -264,46 +272,44 @@ public class MemberService {
      * 중고 거래 (구매 완료)
      */
     @Transactional
-    public List<DealListDto> profileDealPurchase(MemberProfileRequestDto requestDto){
+    public List<DealListDto> profileDealPurchase(MemberProfileRequestDto requestDto, String token){
         List<DealListDto> dtoList;
 
-        // 다른 회원 프로필 조회
-        if(requestDto.getNickname() != null){
-            Member member = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-            Long memberId = member.getId();
+        String jwt = token.replace("Bearer ", "");
 
-            dtoList = dealServiceClient.findDealByMemberIdAndBuyer(memberId);
+        Long memberId = Long.parseLong(getMemberIdFromJwt(jwt));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        // 다른 회원 프로필 조회
+        if(!requestDto.getNickname().equals(member.getNickname())){
+            throw new CustomException(INVALID_ACCESS);
         }
 
         // 본인 프로필 조회
-        else {
-            Long memberId = authServiceClient.getMemberIdBySecurityUtil();
+        dtoList = dealServiceClient.findDealByMemberIdAndBuyer(memberId);
 
-            dtoList = dealServiceClient.findDealByMemberIdAndBuyer(memberId);
-        }
         return dtoList;
     }
     /**
      * 중고 거래 (찜)
      */
     @Transactional
-    public List<DealListDto> profileDealFavorite(MemberProfileRequestDto requestDto){
+    public List<DealListDto> profileDealFavorite(MemberProfileRequestDto requestDto, String token){
         List<DealListDto> dtoList;
 
-        // 다른 회원 프로필 조회
-        if(requestDto.getNickname() != null){
-            Member member = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-            Long memberId = member.getId();
+        String jwt = token.replace("Bearer ", "");
 
-            dtoList = dealServiceClient.findDealByMemberIdAndIsFavorite(memberId);
+        Long memberId = Long.parseLong(getMemberIdFromJwt(jwt));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        // 다른 회원 프로필 조회
+        if(!requestDto.getNickname().equals(member.getNickname())){
+            throw new CustomException(INVALID_ACCESS);
         }
 
         // 본인 프로필 조회
-        else {
-            Long memberId = authServiceClient.getMemberIdBySecurityUtil();
+        dtoList = dealServiceClient.findDealByMemberIdAndIsFavorite(memberId);
 
-            dtoList = dealServiceClient.findDealByMemberIdAndIsFavorite(memberId);
-        }
         return dtoList;
     }
 
@@ -434,6 +440,16 @@ public class MemberService {
         String thumbnailPath = awsS3Service.getThumbnailPath(path);
         return thumbnailPath;
     }
+
+    /**
+     * jwt 토큰 복호화
+     */
+    public String getMemberIdFromJwt(String jwt){
+        return Jwts.parserBuilder().setSigningKey(secret)
+            .build().parseClaimsJws(jwt).getBody()
+            .getSubject();
+    }
+
 
     @PostConstruct
     public void init() {

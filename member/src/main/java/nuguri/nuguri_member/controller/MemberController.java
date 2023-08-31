@@ -58,9 +58,9 @@ public class MemberController {
      * 프로필 조회
      */
     @PostMapping
-    public ResponseEntity profile(@RequestBody MemberProfileRequestDto requestDto){
+    public ResponseEntity profile(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseDto<>(HttpStatus.OK.value(), "회원 프로필 조회", memberService.profile(requestDto))
+                new ResponseDto<>(HttpStatus.OK.value(), "회원 프로필 조회", memberService.profile(requestDto, token))
         );
     }
 
@@ -86,15 +86,15 @@ public class MemberController {
         );
     }
     @PostMapping("/deal/purchase")
-    public ResponseEntity profileDealPurchase(@RequestBody MemberProfileRequestDto requestDto){
+    public ResponseEntity profileDealPurchase(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseDto<>(HttpStatus.OK.value(), "회원 중고 거래(구매 완료) 조회", memberService.profileDealPurchase(requestDto))
+                new ResponseDto<>(HttpStatus.OK.value(), "회원 중고 거래(구매 완료) 조회", memberService.profileDealPurchase(requestDto, token))
         );
     }
     @PostMapping("/deal/favorite")
-    public ResponseEntity profileDealFavorite(@RequestBody MemberProfileRequestDto requestDto){
+    public ResponseEntity profileDealFavorite(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseDto<>(HttpStatus.OK.value(), "회원 중고 거래(찜) 조회", memberService.profileDealFavorite(requestDto))
+                new ResponseDto<>(HttpStatus.OK.value(), "회원 중고 거래(찜) 조회", memberService.profileDealFavorite(requestDto, token))
         );
     }
 
