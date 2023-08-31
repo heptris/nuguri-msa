@@ -66,9 +66,10 @@ public class MemberController {
 
     @PostMapping("/modify")
     public ResponseEntity profileModify(@RequestPart(value = "file", required = false) MultipartFile profileImage,
-                                        @RequestPart(required = false) MemberProfileModifyRequestDto requestDto){
+                                        @RequestPart(required = false) MemberProfileModifyRequestDto requestDto,
+                                        @RequestHeader("Authorization") String token){
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseDto<>(HttpStatus.OK.value(), "회원 프로필 수정", memberService.profileModify(profileImage, requestDto))
+                new ResponseDto<>(HttpStatus.OK.value(), "회원 프로필 수정", memberService.profileModify(profileImage, requestDto, token))
         );
     }
 
@@ -99,28 +100,28 @@ public class MemberController {
     }
 
     @PostMapping("/hobby/ready")
-    public ResponseEntity profileHobbyReady(@RequestBody MemberProfileRequestDto requestDto){
+    public ResponseEntity profileHobbyReady(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(대기 중) 조회", memberService.profileHobbyReady(requestDto))
+                new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(대기 중) 조회", memberService.profileHobbyReady(requestDto, token))
         );
     }
 
     @PostMapping("/hobby/participation")
-    public ResponseEntity profileHobbyParticipation(@RequestBody MemberProfileRequestDto requestDto){
+    public ResponseEntity profileHobbyParticipation(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(참여 중) 조회", memberService.profileHobbyParticipation(requestDto))
+                new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(참여 중) 조회", memberService.profileHobbyParticipation(requestDto, token))
         );
     }
     @PostMapping("/hobby/manage")
-    public ResponseEntity profileHobbyManage(@RequestBody MemberProfileRequestDto requestDto){
+    public ResponseEntity profileHobbyManage(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(운영 중) 조회", memberService.profileHobbyManage(requestDto))
+                new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(운영 중) 조회", memberService.profileHobbyManage(requestDto, token))
         );
     }
     @PostMapping("/hobby/favorite")
-    public ResponseEntity profileHobbyFavorite(@RequestBody MemberProfileRequestDto requestDto){
+    public ResponseEntity profileHobbyFavorite(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(찜) 조회", memberService.profileHobbyFavorite(requestDto))
+                new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(찜) 조회", memberService.profileHobbyFavorite(requestDto, token))
         );
     }
 }

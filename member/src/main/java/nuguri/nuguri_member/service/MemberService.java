@@ -90,8 +90,10 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberProfileModifyResponseDto profileModify(MultipartFile profileImage, MemberProfileModifyRequestDto requestDto){
+    public MemberProfileModifyResponseDto profileModify(MultipartFile profileImage, MemberProfileModifyRequestDto requestDto, String token){
+
         Long memberId = authServiceClient.getMemberIdBySecurityUtil();
+
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         String profileImageUrl;
@@ -129,18 +131,23 @@ public class MemberService {
      * 취미 모임방 (대기 중)
      */
     @Transactional
-    public List<HobbyHistoryResponseDto> profileHobbyReady(MemberProfileRequestDto requestDto){
+    public List<HobbyHistoryResponseDto> profileHobbyReady(MemberProfileRequestDto requestDto, String token){
         List<HobbyHistoryResponseDto> hobbyHistoryResponseDtoList;
-        if (requestDto.getNickname() != null) {
-            Member member = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-            Long memberId = member.getId();
 
-            MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(memberId);
+        String jwt = token.replace("Bearer ", "");
+
+        Long memberId = Long.parseLong(getMemberIdFromJwt(jwt));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        if (!requestDto.getNickname().equals(member.getNickname())) {
+            Member other = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+            Long otherId = other.getId();
+
+            MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(otherId);
 
             hobbyHistoryResponseDtoList = hobbyServiceClient.findMembersReadyHobby(memberIdRequestDto);
 
         } else {
-            Long memberId = authServiceClient.getMemberIdBySecurityUtil();
             MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(memberId);
 
             hobbyHistoryResponseDtoList = hobbyServiceClient.findMembersReadyHobby(memberIdRequestDto);
@@ -152,19 +159,23 @@ public class MemberService {
      * 취미 모임방 (참여 중)
      */
     @Transactional
-    public List<HobbyHistoryResponseDto> profileHobbyParticipation(MemberProfileRequestDto requestDto){
+    public List<HobbyHistoryResponseDto> profileHobbyParticipation(MemberProfileRequestDto requestDto, String token){
         List<HobbyHistoryResponseDto> hobbyHistoryResponseDtoList;
-        if (requestDto.getNickname() != null) {
-            Member member = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-            Long memberId = member.getId();
 
-            MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(memberId);
+        String jwt = token.replace("Bearer ", "");
+
+        Long memberId = Long.parseLong(getMemberIdFromJwt(jwt));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        if (!requestDto.getNickname().equals(member.getNickname())) {
+            Member other = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+            Long otherId = other.getId();
+
+            MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(otherId);
 
             hobbyHistoryResponseDtoList = hobbyServiceClient.findMembersApproveHobby(memberIdRequestDto);
 
         } else {
-            Long memberId = authServiceClient.getMemberIdBySecurityUtil();
-
             MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(memberId);
 
             hobbyHistoryResponseDtoList = hobbyServiceClient.findMembersApproveHobby(memberIdRequestDto);
@@ -176,18 +187,22 @@ public class MemberService {
      * 취미 모임방 (운영 중)
      */
     @Transactional
-    public List<HobbyHistoryResponseDto> profileHobbyManage(MemberProfileRequestDto requestDto){
+    public List<HobbyHistoryResponseDto> profileHobbyManage(MemberProfileRequestDto requestDto, String token){
         List<HobbyHistoryResponseDto> hobbyHistoryResponseDtoList;
-        if (requestDto.getNickname() != null) {
-            Member member = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-            Long memberId = member.getId();
 
-            MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(memberId);
+        String jwt = token.replace("Bearer ", "");
+
+        Long memberId = Long.parseLong(getMemberIdFromJwt(jwt));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        if (!requestDto.getNickname().equals(member.getNickname())) {
+            Member other = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+            Long otherId = other.getId();
+
+            MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(otherId);
 
             hobbyHistoryResponseDtoList = hobbyServiceClient.findMembersPromoterHobby(memberIdRequestDto);
         } else {
-            Long memberId = authServiceClient.getMemberIdBySecurityUtil();
-
             MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(memberId);
 
             hobbyHistoryResponseDtoList = hobbyServiceClient.findMembersPromoterHobby(memberIdRequestDto);
@@ -199,22 +214,22 @@ public class MemberService {
      * 취미 모임방 (찜)
      */
     @Transactional
-    public List<HobbyHistoryResponseDto> profileHobbyFavorite(MemberProfileRequestDto requestDto){
+    public List<HobbyHistoryResponseDto> profileHobbyFavorite(MemberProfileRequestDto requestDto, String token){
         List<HobbyHistoryResponseDto> hobbyHistoryResponseDtoList;
-        if (requestDto.getNickname() != null) {
-            Member member = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-            Long memberId = member.getId();
 
-            MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(memberId);
+        String jwt = token.replace("Bearer ", "");
 
-            hobbyHistoryResponseDtoList = hobbyServiceClient.findMembersfavoriteHobby(memberIdRequestDto);
-        } else {
-            Long memberId = authServiceClient.getMemberIdBySecurityUtil();
+        Long memberId = Long.parseLong(getMemberIdFromJwt(jwt));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-            MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(memberId);
-
-            hobbyHistoryResponseDtoList = hobbyServiceClient.findMembersfavoriteHobby(memberIdRequestDto);
+        if (!requestDto.getNickname().equals(member.getNickname())) {
+            throw new CustomException(INVALID_ACCESS);
         }
+
+        MemberIdRequestDto memberIdRequestDto = new MemberIdRequestDto(memberId);
+
+        hobbyHistoryResponseDtoList = hobbyServiceClient.findMembersfavoriteHobby(memberIdRequestDto);
+
         return hobbyHistoryResponseDtoList;
     }
 
