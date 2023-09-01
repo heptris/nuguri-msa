@@ -32,7 +32,6 @@ public class HobbyController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 hobbyService.findHobbyDetail(hobbyId)
         );
-
     }
     @ApiOperation(value="취미방 생성")
     @PostMapping("/regist")
