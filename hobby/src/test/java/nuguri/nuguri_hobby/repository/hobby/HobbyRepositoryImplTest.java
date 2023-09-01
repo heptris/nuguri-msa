@@ -33,6 +33,5 @@ class HobbyRepositoryImplTest {
         for (HobbyHistoryResponseDto hobbyHistoryResponseDto : byMemberIdAndStatus1) {
             System.out.println("hobbyHistoryResponseDto = " + hobbyHistoryResponseDto);
         }
-
     }
 }
