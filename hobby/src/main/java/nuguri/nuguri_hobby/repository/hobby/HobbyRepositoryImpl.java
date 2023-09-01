@@ -97,9 +97,13 @@ public class HobbyRepositoryImpl implements HobbyRepositoryCustom{
                                 .from(hobbyFavorite)
                                 .where(hobbyFavorite.hobby.id.eq(hobby.id)),"wishlistNum"
                         ),
+                        hobby.rowAgeLimit,
+                        hobby.highAgeLimit,
+                        hobby.sexLimit,
                         hobby.hobbyImage
                 ))
                 .from(hobby)
+                .innerJoin(hobby.hobbyHistoryList, hobbyHistory)
                 .where(
                         hobbyHistory.memberId.eq(memberId),
                         hobbyHistory.approveStatus.eq(approveStatus)
