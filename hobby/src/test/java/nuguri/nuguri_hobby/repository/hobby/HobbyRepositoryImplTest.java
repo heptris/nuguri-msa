@@ -34,4 +34,13 @@ class HobbyRepositoryImplTest {
             System.out.println("hobbyHistoryResponseDto = " + hobbyHistoryResponseDto);
         }
     }
+
+    @Test
+    public void 멤버가즐겨찾기한취미방(){
+        List<HobbyHistoryResponseDto> byMemberIdAndFavorite = hobbyRepository.findByMemberIdAndFavorite(1L);
+        for (HobbyHistoryResponseDto hobbyHistoryResponseDto : byMemberIdAndFavorite) {
+            System.out.println("hobbyHistoryResponseDto = " + hobbyHistoryResponseDto);
+        }
+    }
+
 }
