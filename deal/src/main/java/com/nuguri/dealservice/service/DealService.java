@@ -166,7 +166,7 @@ public class DealService {
             }
         }
 
-        if (!checkCookie) {
+        if (!checkCookie || cookies == null) {
             Cookie newCookie = createCookieForForNotOverlap(dealId);
             response.addCookie(newCookie);
             deal.increaseHit();
