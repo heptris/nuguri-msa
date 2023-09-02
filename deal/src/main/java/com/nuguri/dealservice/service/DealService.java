@@ -140,23 +140,38 @@ public class DealService {
         Deal deal = dealRepository.findById(dealId).orElseThrow(()-> new CustomException(DEAL_NOT_FOUND));
         Cookie[] cookies = request.getCookies();
         boolean checkCookie = false;
-        if(cookies != null){
-            for (Cookie cookie : cookies)
-            {
-                // 이미 조회를 한 경우 체크
-                if (cookie.getName().equals(VIEWCOOKIENAME+dealId)) checkCookie = true;
+//        if(cookies != null){
+//            for (Cookie cookie : cookies)
+//            {
+//                // 이미 조회를 한 경우 체크
+//                if (cookie.getName().equals(VIEWCOOKIENAME+dealId)) checkCookie = true;
+//
+//            }
+//            if(!checkCookie){
+//                Cookie newCookie = createCookieForForNotOverlap(dealId);
+//                response.addCookie(newCookie);
+//                deal.increaseHit();
+//            }
+//        } else {
+//            Cookie newCookie = createCookieForForNotOverlap(dealId);
+//            response.addCookie(newCookie);
+//            deal.increaseHit();
+//        }
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(VIEWCOOKIENAME + dealId)) {
+                    checkCookie = true;
+                    break;
+                }
+            }
+        }
 
-            }
-            if(!checkCookie){
-                Cookie newCookie = createCookieForForNotOverlap(dealId);
-                response.addCookie(newCookie);
-                deal.increaseHit();
-            }
-        } else {
+        if (!checkCookie) {
             Cookie newCookie = createCookieForForNotOverlap(dealId);
             response.addCookie(newCookie);
             deal.increaseHit();
         }
+
     }
 
     /*
