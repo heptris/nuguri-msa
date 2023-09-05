@@ -31,6 +31,14 @@ public class DealController {
         );
     }
 
+    @ApiOperation(value = "로그인시 중고거래 상세페이지 조회")
+    @GetMapping("/detail/login")
+    public ResponseEntity findLoginDealDetail(@RequestParam Long memberId, @RequestParam Long dealId){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseDto(HttpStatus.OK.value(),"로그인시 중고거래 상세페이지", dealService.findLoginDealDetail(memberId, dealId))
+        );
+    }
+
     @ApiOperation(value = "중고거래 등록")
     @PostMapping("/regist")
     public ResponseEntity dealRegist(@RequestPart DealRegistRequestDto dealRegistRequestDto,

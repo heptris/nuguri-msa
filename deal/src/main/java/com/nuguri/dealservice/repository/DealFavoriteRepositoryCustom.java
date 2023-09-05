@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface DealFavoriteRepositoryCustom {
     List<DealListDto> findDealByMemberIdAndIsFavorite(Long memberId);
+    boolean findIsFavoriteByMemberIdAndDealId(Long memberId, Long dealId);
 }

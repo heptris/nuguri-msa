@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static com.nuguri.dealservice.exception.ex.ErrorCode.DEAL_FAVORITE_NOT_FOUND;
 import static com.nuguri.dealservice.exception.ex.ErrorCode.DEAL_NOT_FOUND;
 
 @RequiredArgsConstructor
@@ -75,6 +76,33 @@ public class DealService {
                 .build();
     }
 
+    public DealLoginDetailDto findLoginDealDetail(Long memberId, Long dealId){
+        DealDetailExceptDongDto dealDetailExceptDongDto = dealRepository.dealDetail(dealId)
+                .orElseThrow(() -> new CustomException(DEAL_NOT_FOUND));
+
+        boolean isFavorite = dealFavoriteRepository.findIsFavoriteByMemberIdAndDealId(memberId, dealId);
+
+        Deal deal = dealRepository.findById(dealId).orElseThrow(() -> new CustomException(DEAL_NOT_FOUND));
+        BaseAddressSidoGugunDongDto sidoGugunDongDto = basicClient.findByLocalId(new BaseAddressIdRequestDto(deal.getLocalId()));
+
+        Long sellerId = dealDetailExceptDongDto.getSellerId();
+        MemberNicknameResponseDto nicknameResponseDto = memberClient.getNicknameByMemberId(new MemberIdRequestDto(sellerId));
+
+        return DealLoginDetailDto.builder()
+                .dealId(dealDetailExceptDongDto.getDealId())
+                .title(dealDetailExceptDongDto.getTitle())
+                .description(dealDetailExceptDongDto.getDescription())
+                .price(dealDetailExceptDongDto.getPrice())
+                .hit(dealDetailExceptDongDto.getHit())
+                .isDeal(dealDetailExceptDongDto.isDeal())
+                .dealImage(dealDetailExceptDongDto.getDealImage())
+                .dong(sidoGugunDongDto.getDong())
+                .isFavorite(isFavorite)
+                .sellerId(sellerId)
+                .sellerNickname(nicknameResponseDto.getNickname())
+                .build();
+    }
+
     @Transactional
     public void dealRegist(DealRegistRequestDto dealRegistRequestDto, MultipartFile dealImage){
 
@@ -102,7 +130,8 @@ public class DealService {
 
     @Transactional
     public void createOrModifyDealFavorite(Long memberId, Long dealId){
-        DealFavorite dealFavorite = dealFavoriteRepository.findByMemberIdAndDealId(memberId, dealId);
+        DealFavorite dealFavorite = dealFavoriteRepository.findByMemberIdAndDealId(memberId, dealId)
+                .orElseThrow(() -> new CustomException(DEAL_FAVORITE_NOT_FOUND));
         if(dealFavorite == null) {
             Deal deal = dealRepository.findById(dealId).orElseThrow(()-> new CustomException(DEAL_NOT_FOUND));
             DealFavorite newDealFavorite = DealFavorite.builder()
