@@ -5,6 +5,7 @@ import com.nuguri.dealservice.dto.baseaddress.BaseAddressDto;
 import com.nuguri.dealservice.dto.category.CategoryListDto;
 import com.nuguri.dealservice.dto.deal.DealDetailDto;
 import com.nuguri.dealservice.dto.deal.DealListDto;
+import com.nuguri.dealservice.dto.deal.DealLoginDetailDto;
 import com.nuguri.dealservice.repository.DealFavoriteRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,12 @@ class DealServiceTest {
     public void 비로그인상세페이지조회() throws Exception{
         DealDetailDto dealDetail = dealService.findDealDetail(1L);
         System.out.println("dealDetail = " + dealDetail);
+    }
+
+    @Test
+    public void 로그인상세페이지조회() throws Exception{
+        DealLoginDetailDto loginDealDetail = dealService.findLoginDealDetail(4L, 4L);
+        System.out.println("loginDealDetail = " + loginDealDetail);
     }
 
     @Test

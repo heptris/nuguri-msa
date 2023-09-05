@@ -40,4 +40,19 @@ public class DealFavoriteRepositoryImpl implements DealFavoriteRepositoryCustom{
                 .fetch();
         return dealListDtoList;
     }
+
+    @Override
+    public boolean findIsFavoriteByMemberIdAndDealId(Long memberId, Long dealId) {
+        Boolean isFavorite = queryFactory
+                .select(dealFavorite.isFavorite)
+                .from(dealFavorite)
+                .where(dealFavorite.memberId.eq(memberId)
+                        .and(dealFavorite.deal.id.eq(dealId)))
+                .fetchOne();
+
+        if(isFavorite == null){
+            return false;
+        }
+        return isFavorite;
+    }
 }

@@ -24,4 +24,10 @@ class DealFavoriteRepositoryImplTest {
             System.out.println("dealListDto = " + dealListDto);
         }
     }
+
+    @Test
+    public void 멤버중고거래아이디로즐겨찾기() throws Exception{
+        boolean isFavoriteByMemberIdAndDealId = dealFavoriteRepository.findIsFavoriteByMemberIdAndDealId(4L, 4L);
+        System.out.println("isFavoriteByMemberIdAndDealId = " + isFavoriteByMemberIdAndDealId);
+    }
 }
