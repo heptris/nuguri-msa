@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberProfileModifyRequestDto {
-    private String nickname;
+    private String beforeNickname;
+    private String afterNickname;
 }

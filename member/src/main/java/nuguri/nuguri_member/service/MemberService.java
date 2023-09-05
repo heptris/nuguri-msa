@@ -92,9 +92,13 @@ public class MemberService {
     @Transactional
     public MemberProfileModifyResponseDto profileModify(MultipartFile profileImage, MemberProfileModifyRequestDto requestDto, String token){
 
-        Long memberId = authServiceClient.getMemberIdBySecurityUtil();
-
+        String jwt = token.replace("Bearer ", "");
+        Long memberId = Long.parseLong(getMemberIdFromJwt(jwt));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        if(!requestDto.getBeforeNickname().equals(member.getNickname())){
+            throw new CustomException(INVALID_ACCESS);
+        }
 
         String profileImageUrl;
         String nickname;
@@ -114,7 +118,7 @@ public class MemberService {
         if(requestDto == null){
             nickname = member.getNickname();
         } else {
-            nickname = requestDto.getNickname();
+            nickname = requestDto.getAfterNickname();
         }
 
         member.profileModify(profileImageUrl, nickname);
