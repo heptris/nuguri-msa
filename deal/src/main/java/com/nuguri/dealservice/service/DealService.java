@@ -19,6 +19,8 @@ import com.nuguri.dealservice.repository.DealFavoriteRepository;
 import com.nuguri.dealservice.repository.DealRepository;
 import com.nuguri.dealservice.service.s3.AwsS3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,7 @@ public class DealService {
     private final BasicClient basicClient;
     private final MemberClient memberClient;
     private final KafkaProducer kafkaProducer;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     public List<BaseAddressDto> getAllBaseaddress(){
         return basicClient.getAllBaseaddress();
@@ -55,16 +58,26 @@ public class DealService {
     }
 
     public DealDetailDto findDealDetail(Long dealId){
-        DealDetailExceptDongDto dealDetailExceptDongDto = dealRepository.dealDetail(dealId).orElseThrow(() -> new CustomException(DEAL_NOT_FOUND));
+        DealDetailExceptDongDto dealDetailExceptDongDto = dealRepository.dealDetail(dealId)
+                .orElseThrow(() -> new CustomException(DEAL_NOT_FOUND));
 
         Deal deal = dealRepository.findById(dealId).orElseThrow(() -> new CustomException(DEAL_NOT_FOUND));
-        BaseAddressSidoGugunDongDto sidoGugunDongDto = basicClient.findByLocalId(new BaseAddressIdRequestDto(deal.getLocalId()));
+        // CircuitBreaker로 basic-service에서 응답을 못 받을 경우에 빈 값을 넣도록 설정
+//        BaseAddressSidoGugunDongDto sidoGugunDongDto = basicClient.findByLocalId(new BaseAddressIdRequestDto(deal.getLocalId()));
+        CircuitBreaker basicCircuitbreaker = circuitBreakerFactory.create("basic_circuitbreaker");
+        BaseAddressSidoGugunDongDto sidoGugunDongDto = basicCircuitbreaker.run(() -> basicClient.findByLocalId(new BaseAddressIdRequestDto(deal.getLocalId())),
+                throwable -> new BaseAddressSidoGugunDongDto());
 
+        // CircuitBreaker로 member-service에서 응답을 못 받을 경우에 빈 값을 넣도록 설정
         Long memberId = dealDetailExceptDongDto.getSellerId();
-        MemberNicknameResponseDto nicknameResponseDto = memberClient.getNicknameByMemberId(new MemberIdRequestDto(memberId));
+//        MemberNicknameResponseDto nicknameResponseDto = memberClient.getNicknameByMemberId(new MemberIdRequestDto(memberId));
+        CircuitBreaker memberCircuitbreaker = circuitBreakerFactory.create("member_circuitbreaker");
+        MemberNicknameResponseDto nicknameResponseDto = memberCircuitbreaker.run(() -> memberClient.getNicknameByMemberId(new MemberIdRequestDto(memberId)),
+                throwable -> new MemberNicknameResponseDto());
 
         return DealDetailDto.builder()
                 .isDeal(dealDetailExceptDongDto.isDeal())
+                .title(dealDetailExceptDongDto.getTitle())
                 .dealId(dealDetailExceptDongDto.getDealId())
                 .dealImage(dealDetailExceptDongDto.getDealImage())
                 .description(dealDetailExceptDongDto.getDescription())
@@ -83,10 +96,14 @@ public class DealService {
         boolean isFavorite = dealFavoriteRepository.findIsFavoriteByMemberIdAndDealId(memberId, dealId);
 
         Deal deal = dealRepository.findById(dealId).orElseThrow(() -> new CustomException(DEAL_NOT_FOUND));
-        BaseAddressSidoGugunDongDto sidoGugunDongDto = basicClient.findByLocalId(new BaseAddressIdRequestDto(deal.getLocalId()));
+        CircuitBreaker basicCircuitbreaker = circuitBreakerFactory.create("basic_circuitbreaker");
+        BaseAddressSidoGugunDongDto sidoGugunDongDto = basicCircuitbreaker.run(() -> basicClient.findByLocalId(new BaseAddressIdRequestDto(deal.getLocalId())),
+                throwable -> new BaseAddressSidoGugunDongDto());
 
         Long sellerId = dealDetailExceptDongDto.getSellerId();
-        MemberNicknameResponseDto nicknameResponseDto = memberClient.getNicknameByMemberId(new MemberIdRequestDto(sellerId));
+        CircuitBreaker memberCircuitbreaker = circuitBreakerFactory.create("member_circuitbreaker");
+        MemberNicknameResponseDto nicknameResponseDto = memberCircuitbreaker.run(() -> memberClient.getNicknameByMemberId(new MemberIdRequestDto(sellerId)),
+                throwable -> new MemberNicknameResponseDto());
 
         return DealLoginDetailDto.builder()
                 .dealId(dealDetailExceptDongDto.getDealId())
@@ -110,9 +127,14 @@ public class DealService {
 
         // Member로 부터 localId 데이터 필요
 //        Long localId = 1L;
-        MemberInfoResponseDto memberInfoById = memberClient.getMemberInfoById(MemberIdRequestDto.builder()
-                .memberId(dealRegistRequestDto.getMemberId())
-                .build()).getBody();
+//        MemberInfoResponseDto memberInfoById = memberClient.getMemberInfoById(MemberIdRequestDto.builder()
+//                .memberId(dealRegistRequestDto.getMemberId())
+//                .build()).getBody();
+        CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
+        MemberInfoResponseDto memberInfoById = circuitbreaker.run(() -> memberClient.getMemberInfoById(MemberIdRequestDto.builder()
+                        .memberId(dealRegistRequestDto.getMemberId())
+                        .build()).getBody(),
+                throwable -> new MemberInfoResponseDto());
         Long localId = memberInfoById.getLocalId();
 
         // 중고거래 이미지
