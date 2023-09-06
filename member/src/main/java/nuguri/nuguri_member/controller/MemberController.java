@@ -2,6 +2,8 @@ package nuguri.nuguri_member.controller;
 
 import nuguri.nuguri_member.dto.member.*;
 import nuguri.nuguri_member.dto.response.ResponseDto;
+import nuguri.nuguri_member.exception.ex.CustomException;
+import nuguri.nuguri_member.exception.ex.ErrorCode;
 import nuguri.nuguri_member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -58,7 +60,8 @@ public class MemberController {
      * 프로필 조회
      */
     @PostMapping
-    public ResponseEntity profile(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
+    public ResponseEntity profile(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader(required = false, value = "Authorization") String token){
+        loginCheck(token);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseDto<>(HttpStatus.OK.value(), "회원 프로필 조회", memberService.profile(requestDto, token))
         );
@@ -67,7 +70,8 @@ public class MemberController {
     @PostMapping("/modify")
     public ResponseEntity profileModify(@RequestPart(value = "file", required = false) MultipartFile profileImage,
                                         @RequestPart(required = false) MemberProfileModifyRequestDto requestDto,
-                                        @RequestHeader("Authorization") String token){
+                                        @RequestHeader(required = false, value = "Authorization") String token){
+        loginCheck(token);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseDto<>(HttpStatus.OK.value(), "회원 프로필 수정", memberService.profileModify(profileImage, requestDto, token))
         );
@@ -87,41 +91,51 @@ public class MemberController {
         );
     }
     @PostMapping("/deal/purchase")
-    public ResponseEntity profileDealPurchase(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
+    public ResponseEntity profileDealPurchase(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader(required = false, value = "Authorization") String token){
+        loginCheck(token);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseDto<>(HttpStatus.OK.value(), "회원 중고 거래(구매 완료) 조회", memberService.profileDealPurchase(requestDto, token))
         );
     }
     @PostMapping("/deal/favorite")
-    public ResponseEntity profileDealFavorite(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
+    public ResponseEntity profileDealFavorite(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader(required = false, value = "Authorization") String token){
+        loginCheck(token);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseDto<>(HttpStatus.OK.value(), "회원 중고 거래(찜) 조회", memberService.profileDealFavorite(requestDto, token))
         );
     }
 
     @PostMapping("/hobby/ready")
-    public ResponseEntity profileHobbyReady(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
+    public ResponseEntity profileHobbyReady(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader(required = false, value = "Authorization") String token){
+        loginCheck(token);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(대기 중) 조회", memberService.profileHobbyReady(requestDto, token))
         );
     }
 
     @PostMapping("/hobby/participation")
-    public ResponseEntity profileHobbyParticipation(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
+    public ResponseEntity profileHobbyParticipation(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader(required = false, value = "Authorization") String token){
+        loginCheck(token);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(참여 중) 조회", memberService.profileHobbyParticipation(requestDto, token))
         );
     }
     @PostMapping("/hobby/manage")
-    public ResponseEntity profileHobbyManage(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
+    public ResponseEntity profileHobbyManage(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader(required = false, value = "Authorization") String token){
+        loginCheck(token);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(운영 중) 조회", memberService.profileHobbyManage(requestDto, token))
         );
     }
     @PostMapping("/hobby/favorite")
-    public ResponseEntity profileHobbyFavorite(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader("Authorization") String token){
+    public ResponseEntity profileHobbyFavorite(@RequestBody MemberProfileRequestDto requestDto, @RequestHeader(required = false, value = "Authorization") String token){
+        loginCheck(token);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseDto<>(HttpStatus.OK.value(), "회원 취미 모임방(찜) 조회", memberService.profileHobbyFavorite(requestDto, token))
         );
+    }
+
+    private void loginCheck(String token){
+        if(token == null) throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
     }
 }
