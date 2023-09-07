@@ -28,7 +28,7 @@ public class KafkaConsumer {
     private final MemberRepository memberRepository;
 
     @Transactional
-    @KafkaListener(topics = "example-deal-topic")
+//    @KafkaListener(topics = "example-deal-topic")
     public void updateTemperature(String kafkaMessage){
         log.info("Kafka Message: -> " + kafkaMessage);
 
@@ -55,7 +55,7 @@ public class KafkaConsumer {
 
 
     @Transactional
-    @KafkaListener(topics = "hobby-topic")
+//    @KafkaListener(topics = "hobby-topic")
     public void updateTemperatureFromHobby(String kafkaMessage){
         System.out.println("here@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         log.info("Kafka Message: -> " + kafkaMessage);

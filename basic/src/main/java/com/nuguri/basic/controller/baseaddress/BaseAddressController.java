@@ -6,6 +6,7 @@ import com.nuguri.basic.dto.response.ResponseDto;
 import com.nuguri.basic.service.baseaddress.BaseaddressService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/app/base-address")
 @RequiredArgsConstructor
+@Slf4j
 public class BaseAddressController {
 
     private final BaseaddressService baseaddressService;
@@ -26,6 +28,7 @@ public class BaseAddressController {
 
     @PostMapping("/local/search/local-id")
     public ResponseEntity findByLocalId(@RequestBody BaseAddressIdRequestDto requestDto){
+        log.info("before retrieve basic data");
         return ResponseEntity.status(HttpStatus.OK).body(
                         baseaddressService.findByLocalId(requestDto)
         );

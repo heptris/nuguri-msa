@@ -1,5 +1,6 @@
 package nuguri.nuguri_member.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import nuguri.nuguri_member.dto.member.*;
 import nuguri.nuguri_member.dto.response.ResponseDto;
 import nuguri.nuguri_member.exception.ex.CustomException;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/app/member")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
     private final MemberService memberService;
 
@@ -44,6 +46,7 @@ public class MemberController {
 
     @PostMapping("/member-id")
     public ResponseEntity getNicknameByMemberId(@RequestBody MemberIdRequestDto requestDto){
+        log.info("before retrieve member data");
         return ResponseEntity.status(HttpStatus.OK).body(
                 memberService.getNicknameByMemberId(requestDto)
         );

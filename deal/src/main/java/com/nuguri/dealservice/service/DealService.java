@@ -19,6 +19,7 @@ import com.nuguri.dealservice.repository.DealFavoriteRepository;
 import com.nuguri.dealservice.repository.DealRepository;
 import com.nuguri.dealservice.service.s3.AwsS3Service;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,7 @@ import static com.nuguri.dealservice.exception.ex.ErrorCode.DEAL_FAVORITE_NOT_FO
 import static com.nuguri.dealservice.exception.ex.ErrorCode.DEAL_NOT_FOUND;
 
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 @Service
 public class DealService {
@@ -64,16 +66,22 @@ public class DealService {
         Deal deal = dealRepository.findById(dealId).orElseThrow(() -> new CustomException(DEAL_NOT_FOUND));
         // CircuitBreaker로 basic-service에서 응답을 못 받을 경우에 빈 값을 넣도록 설정
 //        BaseAddressSidoGugunDongDto sidoGugunDongDto = basicClient.findByLocalId(new BaseAddressIdRequestDto(deal.getLocalId()));
+        log.info("Before call basic microservice");
         CircuitBreaker basicCircuitbreaker = circuitBreakerFactory.create("basic_circuitbreaker");
-        BaseAddressSidoGugunDongDto sidoGugunDongDto = basicCircuitbreaker.run(() -> basicClient.findByLocalId(new BaseAddressIdRequestDto(deal.getLocalId())),
+        BaseAddressSidoGugunDongDto sidoGugunDongDto = basicCircuitbreaker.run(() ->
+                        basicClient.findByLocalId(new BaseAddressIdRequestDto(deal.getLocalId())),
                 throwable -> new BaseAddressSidoGugunDongDto());
+        log.info("After call basic microservice");
 
         // CircuitBreaker로 member-service에서 응답을 못 받을 경우에 빈 값을 넣도록 설정
         Long memberId = dealDetailExceptDongDto.getSellerId();
 //        MemberNicknameResponseDto nicknameResponseDto = memberClient.getNicknameByMemberId(new MemberIdRequestDto(memberId));
+        log.info("Before call member microservice");
         CircuitBreaker memberCircuitbreaker = circuitBreakerFactory.create("member_circuitbreaker");
-        MemberNicknameResponseDto nicknameResponseDto = memberCircuitbreaker.run(() -> memberClient.getNicknameByMemberId(new MemberIdRequestDto(memberId)),
+        MemberNicknameResponseDto nicknameResponseDto = memberCircuitbreaker.run(() ->
+                        memberClient.getNicknameByMemberId(new MemberIdRequestDto(memberId)),
                 throwable -> new MemberNicknameResponseDto());
+        log.info("After call member microservice");
 
         return DealDetailDto.builder()
                 .isDeal(dealDetailExceptDongDto.isDeal())

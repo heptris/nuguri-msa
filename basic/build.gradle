@@ -52,6 +52,10 @@ dependencies {
 	// feignclient
 	implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
 
+	// zipkin
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.3.RELEASE'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
