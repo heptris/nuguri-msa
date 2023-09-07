@@ -35,6 +35,12 @@ spring:
     multipart:
       max-file-size: 7MB
       max-request-size: 7MB
+  zipkin:
+    base-url: http://127.0.0.1:9411
+    enabled : true
+  sleuth:
+    sampler:
+      probability: 1.0
 
 logging:
   level:

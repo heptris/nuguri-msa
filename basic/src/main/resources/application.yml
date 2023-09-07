@@ -17,6 +17,12 @@ spring:
   sql:
     init:
       mode: always
+  zipkin:
+    base-url: http://127.0.0.1:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
 
   mvc:
     pathmatch:
