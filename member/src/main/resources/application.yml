@@ -53,3 +53,9 @@ logging:
       nuguri_member: debug
     org.hibernate.SQL: debug
     com.amazonaws.util.EC2MetadataUtils: error
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
