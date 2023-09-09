@@ -4,6 +4,7 @@ import com.nuguri.dealservice.dto.deal.DealRegistRequestDto;
 import com.nuguri.dealservice.dto.deal.DealUpdateDto;
 import com.nuguri.dealservice.dto.response.ResponseDto;
 import com.nuguri.dealservice.service.DealService;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class DealController {
 
     @ApiOperation(value = "비로그인시 중고거래 상세페이지 조회")
     @GetMapping("/{dealId}/detail")
+    @Timed(value = "deal_detail", longTask = true)
     public ResponseEntity findDealDetail(@PathVariable Long dealId){
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseDto(HttpStatus.OK.value(),"비로그인시 중고거래 상세페이지", dealService.findDealDetail(dealId))
@@ -33,6 +35,7 @@ public class DealController {
 
     @ApiOperation(value = "로그인시 중고거래 상세페이지 조회")
     @GetMapping("/detail/login")
+    @Timed(value = "deal_login_detail", longTask = true)
     public ResponseEntity findLoginDealDetail(@RequestParam Long memberId, @RequestParam Long dealId){
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseDto(HttpStatus.OK.value(),"로그인시 중고거래 상세페이지", dealService.findLoginDealDetail(memberId, dealId))
@@ -41,6 +44,7 @@ public class DealController {
 
     @ApiOperation(value = "중고거래 등록")
     @PostMapping("/regist")
+    @Timed(value = "deal_regist", longTask = true)
     public ResponseEntity dealRegist(@RequestPart DealRegistRequestDto dealRegistRequestDto,
                                      @RequestPart(value = "file", required = false) MultipartFile dealImage){
         dealService.dealRegist(dealRegistRequestDto, dealImage);
@@ -70,6 +74,7 @@ public class DealController {
 
     @ApiOperation(value = "중복 증가 방지된 중고거래 조회수 증가")
     @PostMapping("/{dealId}/hit")
+    @Timed(value = "deal_hit", longTask = true)
     public ResponseEntity increaseHit(@PathVariable Long dealId, HttpServletRequest request, HttpServletResponse response){
         dealService.increaseHit(dealId, request, response);
         return ResponseEntity.status(HttpStatus.OK).body(
