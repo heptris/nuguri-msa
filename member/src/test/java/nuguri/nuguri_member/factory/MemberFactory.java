@@ -5,8 +5,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
+import java.util.List;
 import nuguri.nuguri_member.domain.Member;
+import nuguri.nuguri_member.dto.hobby.HobbyHistoryResponseDto;
 import nuguri.nuguri_member.dto.member.MemberProfileDto;
+import nuguri.nuguri_member.dto.member.MemberProfileModifyResponseDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -47,4 +50,29 @@ public class MemberFactory {
             .localId(932l)
             .build();
     }
+
+    public static MemberProfileModifyResponseDto mockMemberProfileModifyResponseDto(){
+        return MemberProfileModifyResponseDto.builder()
+            .profileImage(null)
+            .nickname("changed")
+            .build();
+    }
+
+//    public static List<HobbyHistoryResponseDto> mockHobbyHistoryResponseDto(){
+//        return HobbyHistoryResponseDto.builder()
+//            .hobbyId()
+//            .localId()
+//            .categoryId()
+//            .title()
+//            .endDate()
+//            .isClosed()
+//            .curNum()
+//            .maxNum()
+//            .wishlistNum()
+//            .rowAgeLimit()
+//            .highAgeLimit()
+//            .sexLimit()
+//            .imageurl()
+//            .build();
+//    }
 }
