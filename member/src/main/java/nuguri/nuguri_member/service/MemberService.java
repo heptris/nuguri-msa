@@ -21,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import nuguri.nuguri_member.exception.ex.ErrorCode;
 import nuguri.nuguri_member.service.s3.AwsS3Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -51,7 +53,7 @@ public class MemberService {
     private final HobbyServiceClient hobbyServiceClient;
 
     private final RedisService redisService;
-
+    private final CircuitBreakerFactory circuitBreakerFactory;
     @Value("${token.secret}")
     private String secret;
 
@@ -64,13 +66,19 @@ public class MemberService {
 
         Member member = getMemberFromToken(token);
 
+        log.info(requestDto.getNickname());
+
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("basicCircuitBreaker");
+
         // 다른 회원 프로필 조회
         if(!requestDto.getNickname().equals(member.getNickname())){
             Member other = memberRepository.findByNickname(requestDto.getNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
             BaseAddressIdRequestDto baseAddressIdRequestDto = new BaseAddressIdRequestDto(other.getLocalId());
 
-            BaseAddressSidoGugunDongDto baseAddressDto = baseAddressServiceClient.findByLocalId(baseAddressIdRequestDto);
+            BaseAddressSidoGugunDongDto baseAddressDto = circuitBreaker.run(
+                () -> baseAddressServiceClient.findByLocalId(baseAddressIdRequestDto),
+                throwable -> new BaseAddressSidoGugunDongDto("주소를", "불러오는데", "문제가 발생했습니다."));
 
             memberProfileDto = profileCreate(other, baseAddressDto);
         }
@@ -79,7 +87,9 @@ public class MemberService {
         else {
             BaseAddressIdRequestDto baseAddressIdRequestDto = new BaseAddressIdRequestDto(member.getLocalId());
 
-            BaseAddressSidoGugunDongDto baseAddressDto = baseAddressServiceClient.findByLocalId(baseAddressIdRequestDto);
+            BaseAddressSidoGugunDongDto baseAddressDto = circuitBreaker.run(
+                () -> baseAddressServiceClient.findByLocalId(baseAddressIdRequestDto),
+                throwable -> new BaseAddressSidoGugunDongDto("주소를", "불러오는데", "문제가 발생했습니다."));
 
             memberProfileDto = profileCreate(member, baseAddressDto);
         }
@@ -122,11 +132,6 @@ public class MemberService {
         redisService.setValues(String.valueOf(member.getId()) + ".", nickname);
         return new MemberProfileModifyResponseDto(profileImageUrl, nickname);
     }
-
-//    @Transactional
-//    public void profileFeed(){
-//        return;
-//    }
 
     /**
      * 취미 모임방 (대기 중)
@@ -394,19 +399,19 @@ public class MemberService {
 //    @Transactional
 //    public 공동구매
 
-    private HobbyHistoryResponseDto createHobbyHistoryResponseDto(){
-        return HobbyHistoryResponseDto.builder()
-                .categoryId(1l)
-                .title("Test Title")
-                .endDate(LocalDateTime.now())
-                .curNum(10)
-                .maxNum(20)
-                .wishlistNum(30l)
-                .chatNum(40)
-                .imageurl("S3 Image Url")
-                .approveStatus(ApproveStatus.READY)
-                .build();
-    }
+//    private HobbyHistoryResponseDto createHobbyHistoryResponseDto(){
+//        return HobbyHistoryResponseDto.builder()
+//                .categoryId(1l)
+//                .title("Test Title")
+//                .endDate(LocalDateTime.now())
+//                .curNum(10)
+//                .maxNum(20)
+//                .wishlistNum(30l)
+//                .chatNum(40)
+//                .imageurl("S3 Image Url")
+//                .approveStatus(ApproveStatus.READY)
+//                .build();
+//    }
 
     private MemberProfileDto profileCreate(Member member, BaseAddressSidoGugunDongDto baseAddressDto){
         MemberProfileDto memberProfileDto = MemberProfileDto.builder()
