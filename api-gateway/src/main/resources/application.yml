@@ -33,11 +33,25 @@ spring:
         - id: basic-service
           uri: lb://BASIC-SERVICE
           predicates:
+            - Path=/app/base-address/actuator/**, /app/category/actuator/**
+          filters:
+            - RewritePath=/app/base-address/(?<segment>.*), /$\{segment}
+            - RewritePath=/app/category/(?<segment>.*), /$\{segment}
+        - id: basic-service
+          uri: lb://BASIC-SERVICE
+          predicates:
             - Path=/app/base-address/**, /app/category/**
 #        - id: basic-service
 #          uri: lb://BASIC-SERVICE
 #          predicates:
 #            - Path=/app/category/**
+        - id: deal-service
+          uri: lb://DEAL-SERVICE
+          predicates:
+            - Path=/app/deal/actuator/**, /app/deal-history/actuator/**
+          filters:
+            - RewritePath=/app/deal/(?<segment>.*), /$\{segment}
+            - RewritePath=/app/deal-history/(?<segment>.*), /$\{segment}
         - id: deal-service
           uri: lb://DEAL-SERVICE
           predicates:
@@ -49,3 +63,9 @@ spring:
 
 token:
   secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
