@@ -2,15 +2,8 @@ server:
   port: 0
 
 spring:
-  profiles:
-    include: API-KEY
   application:
     name: member-service
-  datasource:
-    url: jdbc:mysql://localhost:3306/nuguri_member?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-    username: nuguri
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    password: ${MYSQL_PASSWORD}
   sql:
     init:
       mode: always
@@ -37,15 +30,6 @@ spring:
   redis:
     host: localhost
     port: 6379
-
-eureka:
-  instance:
-    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
 
 logging:
   level:
