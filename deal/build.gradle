@@ -27,7 +27,7 @@ repositories {
 }
 
 ext {
-	set('springCloudVersion', "2021.0.5")
+	set('springCloudVersion', "2021.0.8")
 }
 
 dependencies {
@@ -63,6 +63,10 @@ dependencies {
 	// prometheus
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	// cloud config
+	implementation 'org.springframework.cloud:spring-cloud-config-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

@@ -4,16 +4,9 @@ server:
 spring:
   application:
     name: deal-service
-  profiles:
-    include: API-KEY
   output:
     ansi:
       enabled: always # ?? ?? ??
-  datasource:
-    url: jdbc:mysql://localhost:3306/nuguri_deal?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-    username: nuguri
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    password: ${MYSQL_PASSWORD}
   sql:
     init:
       mode: always
@@ -47,15 +40,6 @@ logging:
     com.ssafy.nuguri.dealservice.client: debug
     org.hibernate.SQL: debug
     com.amazonaws.util.EC2MetadataUtils: error
-
-eureka:
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
 
 management:
   endpoints:
