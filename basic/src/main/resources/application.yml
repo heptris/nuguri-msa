@@ -10,7 +10,7 @@ spring:
     ansi:
       enabled: always # ?? ?? ??
   datasource:
-    url: jdbc:mysql://localhost:3306/nuguri_baseaddress?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://mysql:3306/nuguri_baseaddress?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
     username: nuguri
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: ${MYSQL_PASSWORD}
