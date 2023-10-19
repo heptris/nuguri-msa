@@ -19,7 +19,7 @@ repositories {
 }
 
 ext {
-    set('springCloudVersion', "2021.0.5")
+    set('springCloudVersion', "2021.0.8")
 }
 
 dependencies {
@@ -69,6 +69,7 @@ dependencies {
 
     // cloud config
     implementation 'org.springframework.cloud:spring-cloud-config-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
     
     // prometheus
