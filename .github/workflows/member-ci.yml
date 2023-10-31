@@ -34,10 +34,10 @@ jobs:
         distribution: 'temurin'
 
     # 설정파일 추가
-    - name: Set bootstrap.yml
+    - name: Set YML
       run: |
         echo "copy yml"
-        echo "${{ secrets.BOOTSTRAP_MEMBER }}" | base64 --decode > ./member/src/main/resources/bootstrap.yml
+        echo "${{ secrets.BOOTSTRAP }}" | base64 --decode > ./member/src/main/resources/bootstrap.yml
         cat ./member/src/main/resources/bootstrap.yml
 
     # gradle 권한 부여
