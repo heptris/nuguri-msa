@@ -32,7 +32,14 @@ jobs:
     # gradle 권한 부여
     - name: Grant execute permission form gradlew
       run: |
-        cd deal/
+        echo "touch"
+        cd ./deal/src/main/resources/
+        touch ./bootstrap.yml
+        echo "copy yml"
+        echo ${{ secrets.BOOTSTRAP }} >> ./bootstrap.yml
+        value=`cat ./deal/src/main/resources/bootstrap.yml`
+        echo "$value"
+        cd ./deal/
         chmod +x gradlew
     # gradle build
     - name: Build with Gradle deal
@@ -40,9 +47,6 @@ jobs:
      # with:
        # arguments: build
       run: |
-        echo ${{ secrets.BOOTSTRAP }} >> ./deal/src/main/resources/bootstrap.yml
-        value=`cat ./deal/src/main/resources/bootstrap.yml`
-        echo "$value"
         cd deal/
         ./gradlew build -x test
     # image build 및 docker hub에 push
