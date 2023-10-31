@@ -33,8 +33,6 @@ jobs:
     - name: Grant execute permission form gradlew
       run: |
         sudo echo -e ${{ secrets.BOOTSTRAP }} >> ./deal/src/main/resources/bootstrap.yml
-        sudo value=`cat ./deal/src/main/resources/bootstrap.yml`
-        sudo echo "$value"
         cd deal/
         chmod +x gradlew
     # gradle build
