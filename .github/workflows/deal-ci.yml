@@ -29,16 +29,14 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+    - name: Set YML
+      run: |
+        echo "copy yml"
+        echo "${{ secrets.BOOTSTRAP }}" | base64 --decode > ./deal/src/main/resources/bootstrap.yml
     # gradle 권한 부여
     - name: Grant execute permission form gradlew
       run: |
-        echo "touch"
-        cd ./deal/src/main/resources/
-        touch ./bootstrap.yml
-        echo "copy yml"
-        echo ${{ secrets.BOOTSTRAP }} >> ./bootstrap.yml
-        echo "execute permission"
-        cd ./deal/
+        cd deal/
         chmod +x gradlew
     # gradle build
     - name: Build with Gradle deal
