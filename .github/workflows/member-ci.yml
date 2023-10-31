@@ -61,7 +61,7 @@ jobs:
         docker build --tag ${{ secrets.DOCKER_USERNAME }}/member-service:1.0 .
         
     - name: Push Docker image
-      run: docker push ${{ secrets.DOCKER_USERNAME_LEE }}/member-service:1.0
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/member-service:1.0
 
     - name: Docker logout
       run: docker logout
