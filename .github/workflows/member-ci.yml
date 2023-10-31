@@ -43,7 +43,7 @@ jobs:
     - name: Build with Gradle member
       run: |
         cd member/
-        ./gradlew clean build -x test
+        ./gradlew build -x test
 
     # Docker build and push
     - name: Login to DockerHub
