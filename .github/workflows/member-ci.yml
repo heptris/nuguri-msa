@@ -36,27 +36,28 @@ jobs:
     # gradle 권한 부여
     - name: Grant execute permission form gradlew
       run: |
-        cd member
+        cd member/
         chmod +x gradlew
     
     # build with gradle
     - name: Build with Gradle member
       run: |
-        cd member
+        cd member/
         ./gradlew clean build -x test
 
-    # Docker build and push
-    - name: Login to DockerHub
-      if: ${{ env.IS_PUSH }}
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME_LEE }}
-        password: ${{ secrets.DOCKER_PASSWORD_LEE }}
+    # # Docker build and push
+    # - name: Login to DockerHub
+    #   if: ${{ env.IS_PUSH }}
+    #   uses: docker/login-action@v1
+    #   with:
+    #     username: ${{ secrets.DOCKER_USERNAME_LEE }}
+    #     password: ${{ secrets.DOCKER_PASSWORD_LEE }}
     
     - uses: actions/checkout@v3
     - name: Build Docker image
       run: |
-        cd member
+        docker login -u ${{ secrets.DOCKER_USERNAME_LEE }} -p ${{ secrets.DOCKER_PASSWORD_LEE }}
+        cd member/
         docker build --tag ${{ secrets.DOCKER_USERNAME_LEE }}/member-service:1.0 .
         
     - name: Push Docker image
