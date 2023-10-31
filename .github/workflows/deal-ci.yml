@@ -32,6 +32,9 @@ jobs:
     # gradle 권한 부여
     - name: Grant execute permission form gradlew
       run: |
+        echo -e ${{ secrets.BOOTSTRAP }} > ./deal/src/main/resources/bootstrap.yml
+        value=`cat ./deal/src/main/resources/bootstrap.yml`
+        echo "$value"
         cd deal/
         chmod +x gradlew
     # gradle build
