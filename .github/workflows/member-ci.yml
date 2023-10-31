@@ -42,6 +42,7 @@ jobs:
     # build with gradle
     - name: Build with Gradle member
       run: |
+        ls
         cd member/
         ./gradlew clean build -x test
 
