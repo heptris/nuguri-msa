@@ -33,7 +33,7 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
-    # 설정파일 추가
+    # 설정파일 추가 
     - name: Set YML
       run: |
         echo "copy yml"
