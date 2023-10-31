@@ -17,7 +17,6 @@ public class TestController {
     @GetMapping("/config")
     public ResponseEntity<String> config(){
         System.out.println(testConfig);
-        System.out.println("test");
         return ResponseEntity.ok(testConfig.toString());
     }
 }
