@@ -33,6 +33,7 @@ jobs:
       run: |
         echo "copy yml"
         echo "${{ secrets.BOOTSTRAP }}" | base64 --decode > ./deal/src/main/resources/bootstrap.yml
+        cat ./deal/src/main/resources/bootstrap.yml
     # gradle 권한 부여
     - name: Grant execute permission form gradlew
       run: |
