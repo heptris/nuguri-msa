@@ -34,6 +34,12 @@ spring:
   sleuth:
     sampler:
       probability: 1.0
+  config:
+    import: "optional:configserver:http://localhost:8888/"
+  cloud:
+    config:
+      name: deal
+      profile: prod
 
 logging:
   level:

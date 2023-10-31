@@ -46,7 +46,7 @@ public class ConfigGitClientWatch implements Closeable, EnvironmentAware {
 
     @Scheduled(
             initialDelayString = "${spring.cloud.config.watch.git.initialDelay:10000}",
-            fixedDelayString = "${spring.cloud.config.watch.git.delay:10000}"
+            fixedDelayString = "${spring.cloud.config.watch.git.delay:100000}"
     )
     public void watchConfigServer() {
         if (running.get()) {
