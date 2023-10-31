@@ -37,8 +37,7 @@ jobs:
         touch ./bootstrap.yml
         echo "copy yml"
         echo ${{ secrets.BOOTSTRAP }} >> ./bootstrap.yml
-        value=`cat ./deal/src/main/resources/bootstrap.yml`
-        echo "$value"
+        echo "execute permission"
         cd ./deal/
         chmod +x gradlew
     # gradle build
