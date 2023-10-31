@@ -53,24 +53,14 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME_LEE }}
         password: ${{ secrets.DOCKER_PASSWORD_LEE }}
     
-    # - uses: actions/checkout@v3
-    # - name: Build Docker image
-    #   run: |
-    #     cd member/
-    #     docker build --tag ${{ secrets.DOCKER_USERNAME_LEE }}/member-service:1.0 .
-    
-    - name: Build and push
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        file: ./member/Dockerfile
-        platforms: linux/amd64
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME_LEE }}/member-service
-        labels: 1.0
+    - uses: actions/checkout@v3
+    - name: Build Docker image
+      run: |
+        cd member/
+        docker build --tag ${{ secrets.DOCKER_USERNAME_LEE }}/member-service:1.0 .
         
-    # - name: Push Docker image
-    #   run: docker push ${{ secrets.DOCKER_USERNAME_LEE }}/member-service:1.0
+    - name: Push Docker image
+      run: docker push ${{ secrets.DOCKER_USERNAME_LEE }}/member-service:1.0
 
     - name: Docker logout
       run: docker logout
