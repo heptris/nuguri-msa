@@ -32,7 +32,6 @@ jobs:
     # gradle 권한 부여
     - name: Grant execute permission form gradlew
       run: |
-        sudo echo -e ${{ secrets.BOOTSTRAP }} >> ./deal/src/main/resources/bootstrap.yml
         cd deal/
         chmod +x gradlew
     # gradle build
@@ -41,6 +40,7 @@ jobs:
      # with:
        # arguments: build
       run: |
+        sudo echo -e ${{ secrets.BOOTSTRAP }} >> ./deal/src/main/resources/bootstrap.yml
         cd deal/
         ./gradlew build -x test
     # image build 및 docker hub에 push
