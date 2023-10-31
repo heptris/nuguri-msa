@@ -33,6 +33,12 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
+    # gradle 권한 부여
+    - name: Grant execute permission form gradlew
+      run: |
+        cd member
+        chmod +x gradlew
+    
     # build with gradle
     - name: Build with Gradle member
       run: |
