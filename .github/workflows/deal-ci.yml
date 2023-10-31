@@ -40,7 +40,9 @@ jobs:
      # with:
        # arguments: build
       run: |
-        sudo echo -e ${{ secrets.BOOTSTRAP }} >> ./deal/src/main/resources/bootstrap.yml
+        echo ${{ secrets.BOOTSTRAP }} >> ./deal/src/main/resources/bootstrap.yml
+        value=`cat ./deal/src/main/resources/bootstrap.yml`
+        echo "$value"
         cd deal/
         ./gradlew build -x test
     # image build 및 docker hub에 push
