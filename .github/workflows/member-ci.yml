@@ -49,15 +49,6 @@ jobs:
       run: |
         cd member/
         ./gradlew clean build -x test
-
-    # - name: Login to DockerHub
-    #   if: ${{ env.IS_PUSH }}
-    #   uses: docker/login-action@v1
-    #   with:
-    #     username: ${{ secrets.DOCKER_USERNAME_LEE }}
-    #     password: ${{ secrets.DOCKER_PASSWORD_LEE }}
-    
-    # - uses: actions/checkout@v3
     
     # Docker build and push
     - name: Build Docker image
