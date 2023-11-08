@@ -89,7 +89,7 @@ public class AwsS3Service {
     }
 
     public String getThumbnailPath(String path) {
-        return amazonS3Client.getUrl(bucket, path).toString();
+        return amazonS3Client.getUrl(bucket, path).getPath();
     }
 
 
