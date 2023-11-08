@@ -20,6 +20,7 @@ import com.nuguri.dealservice.repository.DealRepository;
 import com.nuguri.dealservice.service.s3.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,8 @@ public class DealService {
     private final MemberClient memberClient;
     private final KafkaProducer kafkaProducer;
     private final CircuitBreakerFactory circuitBreakerFactory;
+    @Value("${cloud.aws.cloud-front.domain}")
+    private String cloudFrontUrl;
 
     public List<BaseAddressDto> getAllBaseaddress(){
         return basicClient.getAllBaseaddress();
@@ -152,7 +155,7 @@ public class DealService {
         }catch (IOException e){
             System.out.println(e);
         }
-        String dealImageUrl = awsS3.getPath();
+        String dealImageUrl = cloudFrontUrl + awsS3.getKey();
 
         deal.registDeal(localId, dealImageUrl);
         dealRepository.save(deal);
@@ -187,7 +190,7 @@ public class DealService {
         }catch (IOException e){
             System.out.println(e);
         }
-        String dealImageUrl = awsS3.getPath();
+        String dealImageUrl = cloudFrontUrl + awsS3.getKey();
 
         deal.updateDeal(dealUpdateDto.getTitle(), dealUpdateDto.getDescription(), dealUpdateDto.getPrice(), dealImageUrl);
     }
