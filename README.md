@@ -20,4 +20,4 @@ Monitoring
 
 ## ✔ 아키텍처
 
-![nuguri_msa_아키텍처](https://github.com/heptris/nuguri-msa/assets/95201136/9d8cb25d-dce5-4cee-9868-7a4d3b8f8003)
+![nuguri_msa_아키텍처_ver2](https://github.com/heptris/nuguri-msa/assets/95201136/3c9736bc-ef24-40dc-b6d4-7590700da4f9)
