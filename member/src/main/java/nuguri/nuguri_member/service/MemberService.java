@@ -57,6 +57,9 @@ public class MemberService {
     @Value("${token.secret}")
     private String secret;
 
+    @Value("${cloud.aws.cloud-front.domain}")
+    private String cloudFrontDomain;
+
     /**
      * 회원 프로필 조회
      */
@@ -119,7 +122,7 @@ public class MemberService {
             }catch (IOException e){
                 System.out.println(e);
             }
-            profileImageUrl = awsS3.getPath();
+            profileImageUrl = cloudFrontDomain + "/" + awsS3.getKey();
         }
 
         if(requestDto == null){
@@ -388,7 +391,7 @@ public class MemberService {
         Long localId = baseAddressServiceClient.findBySidoGugunDong(requestDto);
 
         Member member = memberJoinDto.toMember(passwordEncoder);
-        member.changeProfileImage(randomProfileImage());
+        member.changeProfileImage(cloudFrontDomain + randomProfileImage());
         member.changeLocalId(localId);
         member.changeTemperature(36.5);
         memberRepository.save(member);
