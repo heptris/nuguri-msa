@@ -13,9 +13,10 @@ env:
 
 on:
   push:
-    branches: [ "feature/member" ]
-  pull_request:
-    branches: [ "feature/member" ]
+    branches: [ "develop" ]
+    # branches: [ "feature/member" ]
+  # pull_request:
+  #   branches: [ "feature/member" ]
 
 permissions:
   contents: read
