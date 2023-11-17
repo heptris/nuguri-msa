@@ -28,7 +28,7 @@ public class KafkaConsumer {
     private final MemberRepository memberRepository;
 
     @Transactional
-//    @KafkaListener(topics = "example-deal-topic")
+    @KafkaListener(topics = "example-deal-topic")
     public void updateTemperature(String kafkaMessage){
         log.info("Kafka Message: -> " + kafkaMessage);
 
