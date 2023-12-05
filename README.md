@@ -3,7 +3,7 @@
 ![image](https://github.com/heptris/nuguri-msa/assets/95201136/5798f5bd-6575-43cb-8477-54e4a0b1122d)
 
 ## ✔ 서비스 소개
-_- 지역 기반 취미모임 커뮤니티 ver.MSA -_
+_- 지역 기반 취미모임 커뮤니티 ver.MSA -
 
 ## ✔ 사용 기술
 Backend
